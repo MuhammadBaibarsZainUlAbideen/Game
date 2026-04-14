@@ -12,6 +12,8 @@
                 "${workspaceFolder}/Src/Buffers/buffer.cpp",
                 "${workspaceFolder}/Src/core/movement.cpp",
                 "${workspaceFolder}/Src/core/updating_mvp.cpp",
+                "${workspaceFolder}/Src/Terrain_Generation/tg.cpp",
+                "${workspaceFolder}/Src/rendering/normalization.cpp",
                 "C:/Users/Talal/Desktop/GLFW/glad/src/glad.c",
                 "-IC:/Users/Talal/Desktop/GLFW/glad/include",
                 "-IC:/Users/Talal/Desktop/Game_Dependencies/FastNoiseLite-master/FastNoiseLite-master/Cpp",

@@ -10,7 +10,8 @@
 #include "core/movement.h"
 #include "core/updating_mvp.h"
 #include "FastNoiseLite.h"
-#include <vector>
+#include "Terrain_Generation/tg.h"
+#include "rendering/normalization.h"
 const char* vertexShaderSource = R"(
     #version 330 core
     layout (location = 0) in vec3 aPos;
@@ -56,93 +57,6 @@ const char* fragmentShaderSource = R"(
     }
 )";
 
-std::vector<float> generateTerrain(FastNoiseLite& noise) {
-    const int SIZE = 100;
-    std::vector<float> vertices;
-
-    for (int z = 0; z < SIZE; z++) {
-        for (int x = 0; x < SIZE; x++) {
-            float height = noise.GetNoise((float)x, (float)z) * 10.0f;
-            vertices.push_back(x);
-            vertices.push_back(height);
-            vertices.push_back(z);
-        }
-    }
-    return vertices;
-}
-std::vector<unsigned int> generateIndices() {
-    const int SIZE = 100;
-    std::vector<unsigned int> indices;
-
-    for (int z = 0; z < SIZE - 1; z++) {
-        for (int x = 0; x < SIZE - 1; x++) {
-            int topLeft     = z * SIZE + x;
-            int topRight    = topLeft + 1;
-            int bottomLeft  = (z + 1) * SIZE + x;
-            int bottomRight = bottomLeft + 1;
-
-           
-            indices.push_back(topLeft);
-            indices.push_back(bottomLeft);
-            indices.push_back(topRight);
-
-            
-            indices.push_back(topRight);
-            indices.push_back(bottomLeft);
-            indices.push_back(bottomRight);
-        }
-    }
-    return indices;
-}
-std::vector<float> normaization(std::vector<unsigned int> & indices, std::vector<float> & vertices){
-    int count = 0;
-    std::vector<unsigned int> temp;
-    std::vector<glm::vec3> temp_vectors;
-    std::vector<glm::vec3> normal_arr;
-    std::vector<float> vertices_new;
-
-    for(int i = 0 ; i< indices.size(); i++){
-        count += 1;
-        temp.push_back(indices[i]);
-        if(count == 3){
-
-            for(int j =0; j<count; j++){
-                temp_vectors.push_back(glm::vec3(vertices[temp[j] * 3 + 0],vertices[temp[j] * 3 + 1],vertices[temp[j] * 3 + 2]));
-
-
-            }
-            glm::vec3 edge_1 = temp_vectors[1] - temp_vectors[0];
-            glm::vec3 edge_2 = temp_vectors[2] - temp_vectors[0];
-            glm::vec3 normal = glm::cross(edge_1,edge_2);
-
-            // normal_arr.push_back(normal);
-            for(int f =0; f<count; f++){
-                vertices_new.push_back(vertices[temp[f] * 3 + 0]); 
-                vertices_new.push_back(vertices[temp[f] * 3 + 1]); 
-                vertices_new.push_back(vertices[temp[f] * 3 + 2]); 
-                vertices_new.push_back(normal.x);
-                vertices_new.push_back(normal.y);
-                vertices_new.push_back(normal.z);              
-
-
-            }
-
-
-            count =0;
-            temp.clear();
-            temp_vectors.clear();
-            
-            
-
-        }
-
-
-        
-
-    }
-    return vertices_new;
-
-};
 glm::vec3 cameraPos   = glm::vec3(0.0f, 0.0f, 3.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -186,31 +100,39 @@ void mouseCallback(GLFWwindow* window, double xpos, double ypos)
 int main (){
     glfwInit();
     FastNoiseLite noise;
+    Normal normalization;
+    Window window(1800,1200,"Black");
+    Shader shader(vertexShaderSource,fragmentShaderSource);
+    TG tg;
+    Move move;
+    updating_mvp mvp;
+
+
+
     noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-    std::vector<float> vertices = generateTerrain(noise);
+    std::vector<float> vertices = tg.generateTerrain(noise);
+
+    std::vector<unsigned int> indices = tg.generateIndices();
+    std::vector<float> vertices_new = normalization.normaization(indices, vertices);
+    Buffer buffer(vertices_new.data(), vertices_new.size() * sizeof(float), indices.data(), indices.size() * sizeof(unsigned int));
+
+    shader.use();
     
 
-    Window window(1800,1200,"Black");
-    Move move;
     glfwSetCursorPosCallback(window.handle, mouseCallback);
     glfwSetInputMode(window.handle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 
-    Shader shader(vertexShaderSource,fragmentShaderSource);
-    shader.use();
-    std::vector<unsigned int> indices = generateIndices();
-    std::vector<float> vertices_new = normaization(indices, vertices);
-    Buffer buffer(vertices_new.data(), vertices_new.size() * sizeof(float), indices.data(), indices.size() * sizeof(unsigned int));
-    updating_mvp mvp;
-
-
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     while (!glfwWindowShouldClose(window.handle)) {
-        cameraPos.y = noise.GetNoise(cameraPos.x, cameraPos.z) * 10.0f + 2.0f;
         glfwPollEvents();
+        cameraPos.y = noise.GetNoise(cameraPos.x, cameraPos.z) * 10.0f + 3.0f;
+        
         move.processInput(window.handle, cameraPos, cameraFront,cameraUp);
         
         glClear(GL_COLOR_BUFFER_BIT);
+        glClearColor(0.53f, 0.81f, 0.98f, 1.0f);
         mvp.cameraPos(cameraPos,cameraFront,cameraUp,shader);        
         
         glDrawArrays(GL_TRIANGLES, 0, vertices_new.size() / 6);
