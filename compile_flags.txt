@@ -1,0 +1,14 @@
+--target=x86_64-w64-mingw32
+-std=c++17
+-nostdinc
+-nostdinc++
+-IC:/Users/Talal/Downloads/winlibs-x86_64-posix-seh-gcc-15.2.0-mingw-w64ucrt-13.0.0-r3/mingw64/include/c++/15.2.0
+-IC:/Users/Talal/Downloads/winlibs-x86_64-posix-seh-gcc-15.2.0-mingw-w64ucrt-13.0.0-r3/mingw64/include/c++/15.2.0/x86_64-w64-mingw32
+-IC:/Users/Talal/Downloads/winlibs-x86_64-posix-seh-gcc-15.2.0-mingw-w64ucrt-13.0.0-r3/mingw64/include/c++/15.2.0/backward
+-IC:/Users/Talal/Downloads/winlibs-x86_64-posix-seh-gcc-15.2.0-mingw-w64ucrt-13.0.0-r3/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include
+-IC:/Users/Talal/Downloads/winlibs-x86_64-posix-seh-gcc-15.2.0-mingw-w64ucrt-13.0.0-r3/mingw64/include
+-IC:/Users/Talal/Downloads/winlibs-x86_64-posix-seh-gcc-15.2.0-mingw-w64ucrt-13.0.0-r3/mingw64/x86_64-w64-mingw32/include
+-IC:/Users/Talal/Desktop/GLFW/glfw-3.4.bin.WIN64/glfw-3.4.bin.WIN64/include
+-IC:/Users/Talal/Desktop/GLFW/glad/include
+-IC:/Users/Talal/Desktop/GLFW/glm-master/glm-master
+-IC:/Users/Talal/Desktop/Game_Dependencies/FastNoiseLite-master/FastNoiseLite-master/Cpp
