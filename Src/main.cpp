@@ -56,9 +56,58 @@ const char* fragmentShaderSource = R"(
         FragColor = vec4(result,1.0);
     }
 )";
+float player[] = {
+    // Front face (z = 1)
+    0.0f, 0.0f, 1.0f,  0.0f, 0.0f, 1.0f,
+    1.0f, 0.0f, 1.0f,  0.0f, 0.0f, 1.0f,
+    1.0f, 1.0f, 1.0f,  0.0f, 0.0f, 1.0f,
+    0.0f, 0.0f, 1.0f,  0.0f, 0.0f, 1.0f,
+    1.0f, 1.0f, 1.0f,  0.0f, 0.0f, 1.0f,
+    0.0f, 1.0f, 1.0f,  0.0f, 0.0f, 1.0f,
 
-glm::vec3 cameraPos   = glm::vec3(0.0f, 0.0f, 3.0f);
-glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+    // Back face (z = 0)
+    1.0f, 0.0f, 0.0f,  0.0f, 0.0f, -1.0f,
+    0.0f, 0.0f, 0.0f,  0.0f, 0.0f, -1.0f,
+    0.0f, 1.0f, 0.0f,  0.0f, 0.0f, -1.0f,
+    1.0f, 0.0f, 0.0f,  0.0f, 0.0f, -1.0f,
+    0.0f, 1.0f, 0.0f,  0.0f, 0.0f, -1.0f,
+    1.0f, 1.0f, 0.0f,  0.0f, 0.0f, -1.0f,
+
+    // Left face (x = 0)
+    0.0f, 0.0f, 0.0f,  -1.0f, 0.0f, 0.0f,
+    0.0f, 0.0f, 1.0f,  -1.0f, 0.0f, 0.0f,
+    0.0f, 1.0f, 1.0f,  -1.0f, 0.0f, 0.0f,
+    0.0f, 0.0f, 0.0f,  -1.0f, 0.0f, 0.0f,
+    0.0f, 1.0f, 1.0f,  -1.0f, 0.0f, 0.0f,
+    0.0f, 1.0f, 0.0f,  -1.0f, 0.0f, 0.0f,
+
+    // Right face (x = 1)
+    1.0f, 0.0f, 1.0f,  1.0f, 0.0f, 0.0f,
+    1.0f, 0.0f, 0.0f,  1.0f, 0.0f, 0.0f,
+    1.0f, 1.0f, 0.0f,  1.0f, 0.0f, 0.0f,
+    1.0f, 0.0f, 1.0f,  1.0f, 0.0f, 0.0f,
+    1.0f, 1.0f, 0.0f,  1.0f, 0.0f, 0.0f,
+    1.0f, 1.0f, 1.0f,  1.0f, 0.0f, 0.0f,
+
+    // Top face (y = 1)
+    0.0f, 1.0f, 1.0f,  0.0f, 1.0f, 0.0f,
+    1.0f, 1.0f, 1.0f,  0.0f, 1.0f, 0.0f,
+    1.0f, 1.0f, 0.0f,  0.0f, 1.0f, 0.0f,
+    0.0f, 1.0f, 1.0f,  0.0f, 1.0f, 0.0f,
+    1.0f, 1.0f, 0.0f,  0.0f, 1.0f, 0.0f,
+    0.0f, 1.0f, 0.0f,  0.0f, 1.0f, 0.0f,
+
+    // Bottom face (y = 0)
+    0.0f, 0.0f, 0.0f,  0.0f, -1.0f, 0.0f,
+    1.0f, 0.0f, 0.0f,  0.0f, -1.0f, 0.0f,
+    1.0f, 0.0f, 1.0f,  0.0f, -1.0f, 0.0f,
+    0.0f, 0.0f, 0.0f,  0.0f, -1.0f, 0.0f,
+    1.0f, 0.0f, 1.0f,  0.0f, -1.0f, 0.0f,
+    0.0f, 0.0f, 1.0f,  0.0f, -1.0f, 0.0f,
+};
+
+glm::vec3 cameraPos   = glm::vec3(0.0f, 0.0f, -3.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, 1.0f);
 glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f, 0.0f);
 float yaw   = -90.0f;  
 float pitch =   0.0f;  
@@ -99,6 +148,9 @@ void mouseCallback(GLFWwindow* window, double xpos, double ypos)
 
 int main (){
     glfwInit();
+
+    //Making Objects
+
     FastNoiseLite noise;
     Normal normalization;
     Window window(1800,1200,"Black");
@@ -108,17 +160,19 @@ int main (){
     updating_mvp mvp;
 
 
-
+    //Usage of Noise Objects + tg
     noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
     std::vector<float> vertices = tg.generateTerrain(noise);
 
+    //Usage of tg + notmalization + Creating and Using buffer object
     std::vector<unsigned int> indices = tg.generateIndices();
     std::vector<float> vertices_new = normalization.normaization(indices, vertices);
-    Buffer buffer(vertices_new.data(), vertices_new.size() * sizeof(float), indices.data(), indices.size() * sizeof(unsigned int));
+    Buffer buffer(vertices_new.data(), vertices_new.size() * sizeof(float), indices.data(), indices.size() * sizeof(unsigned int),player, sizeof(player));
 
+    //Usage of Shader Object
     shader.use();
     
-
+    //OpenGl Mouse Call Back
     glfwSetCursorPosCallback(window.handle, mouseCallback);
     glfwSetInputMode(window.handle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
@@ -133,10 +187,15 @@ int main (){
         
         glClear(GL_COLOR_BUFFER_BIT);
         glClearColor(0.53f, 0.81f, 0.98f, 1.0f);
-        mvp.cameraPos(cameraPos,cameraFront,cameraUp,shader);        
+        mvp.cameraPos(cameraPos,cameraFront,cameraUp,shader);     
+        glBindVertexArray(buffer.VAO);   
         
         glDrawArrays(GL_TRIANGLES, 0, vertices_new.size() / 6);
+        glBindVertexArray(buffer.Player_VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
         glfwSwapBuffers(window.handle);
+        
     }
 
     glfwTerminate();

@@ -5,7 +5,8 @@
 class Buffer{
     public:
         unsigned int VAO, VBO;
-        Buffer(float *vertices, int vertexSize, unsigned int *indices, int indexSize);
+        unsigned int Player_VBO, Player_VAO;
+        Buffer(float *vertices, int vertexSize, unsigned int *indices, int indexSize, float *player_vertices, int player_size);
         
 
 };
