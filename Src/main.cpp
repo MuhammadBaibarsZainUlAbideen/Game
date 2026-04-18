@@ -34,7 +34,7 @@ const char* fragmentShaderSource = R"(
     in vec3 Normal;
     in vec3 Pos;
     out vec4 FragColor;
-    vec3 lightDir = normalize(vec3(0,1,3));
+    vec3 lightDir = normalize(vec3(2,1,3));
     vec3 color_green = vec3(0.0, 0.8, 0.0);
     vec3 color_grey  = vec3(0.5, 0.5, 0.5);
     vec3 color_white = vec3(1.0, 1.0, 1.0);
@@ -109,6 +109,7 @@ float player[] = {
 glm::vec3 cameraPos   = glm::vec3(0.0f, 0.0f, -3.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, 1.0f);
 glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f, 0.0f);
+glm::vec3 cube_vertices = glm::vec3(0.0f, 0.0f, 0.0f);
 float yaw   = -90.0f;  
 float pitch =   0.0f;  
 float lastX =  400.0f; 
