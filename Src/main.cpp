@@ -187,10 +187,8 @@ int main (){
         // cameraPos.z = cube_vertices.z;
 
         
-
         
-        
-        move.processInput(window.handle, cube_vertices,cameraFront);
+        move.processInput(window.handle, cube_vertices,cameraFront,cameraUp);
         
         glClear(GL_COLOR_BUFFER_BIT);
         glClearColor(0.53f, 0.81f, 0.98f, 1.0f);
@@ -201,8 +199,12 @@ int main (){
         
         glDrawArrays(GL_TRIANGLES, 0, vertices_new.size() / 6);
         glBindVertexArray(buffer.Player_VAO);
+        mvp.model = glm::mat4(1.0f);
         cube_vertices.y = noise.GetNoise(cube_vertices.x, cube_vertices.z) * 10.0f;
-        mvp.model = glm::translate(glm::mat4(1.0f), cube_vertices);
+        mvp.model = glm::translate(mvp.model, cube_vertices);
+        mvp.model = glm::rotate(mvp.model, glm::radians(-yaw), glm::vec3(0.0f, 1.0f, 0.0f));
+        mvp.model = glm::scale(mvp.model, glm::vec3(1.0f, 1.3f, 1.0f));
+        
         mvp.cameraPos(cameraPos,cameraFront,cameraUp,shader,cube_vertices); 
         glDrawArrays(GL_TRIANGLES, 0, 36);
 

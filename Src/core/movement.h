@@ -6,7 +6,8 @@
 class Move{
     public:
         float speed;
+        glm::vec3 right;
         
-        void processInput(GLFWwindow* window, glm::vec3& cube_vertices,glm::vec3& cameraFront);
+        void processInput(GLFWwindow* window, glm::vec3& cube_vertices,glm::vec3& cameraFront,glm::vec3& cameraUp);
         
 };
