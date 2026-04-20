@@ -7,7 +7,8 @@
 
 class updating_mvp{
     public:
+        glm::vec3 eye_postion;
         glm::mat4 model;
-        void cameraPos(glm::vec3 cameraPos, glm::vec3 cameraFront, glm::vec3 cameraUp, Shader shader );
+        void cameraPos(glm::vec3 cameraPos, glm::vec3 cameraFront, glm::vec3 cameraUp, Shader shader,glm::vec3 &cube_vertices );
 
 };

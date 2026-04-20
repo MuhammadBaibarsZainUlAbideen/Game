@@ -1,15 +1,15 @@
 #include "movement.h"
 
 
-void Move::processInput(GLFWwindow* window, glm::vec3& cameraPos, glm::vec3 cameraFront, glm::vec3 cameraUp){
-    cameraSpeed = 0.05f;
+void Move::processInput(GLFWwindow* window, glm::vec3& cube_vertices,glm::vec3& cameraFront){
+    speed = 0.05f;
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        cameraPos += cameraSpeed * cameraFront;
+        cube_vertices += speed * glm::vec3(cameraFront.x, 0.0f, cameraFront.z);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        cameraPos -= cameraSpeed * cameraFront;
+        cube_vertices -= speed * glm::vec3(cameraFront.x, 0.0f, cameraFront.z);
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+        cube_vertices.z -= speed;
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+        cube_vertices.z += speed;
 }

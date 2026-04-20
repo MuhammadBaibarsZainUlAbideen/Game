@@ -1,7 +1,8 @@
 #include "updating_mvp.h"
 
-void updating_mvp :: cameraPos(glm::vec3 cameraPos, glm::vec3 cameraFront, glm::vec3 cameraUp, Shader shader ){
-    glm::mat4 view       = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+void updating_mvp :: cameraPos(glm::vec3 cameraPos, glm::vec3 cameraFront, glm::vec3 cameraUp, Shader shader,glm::vec3 &cube_vertices ){
+    eye_postion =glm::vec3(cube_vertices.x-1.0f,cube_vertices.y+2.0f,cube_vertices.z); 
+    glm::mat4 view       = glm::lookAt(eye_postion, eye_postion + cameraFront, cameraUp);
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 
     

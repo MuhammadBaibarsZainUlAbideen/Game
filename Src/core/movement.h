@@ -5,8 +5,8 @@
 #include <GLFW/glfw3.h>
 class Move{
     public:
-        float cameraSpeed;
+        float speed;
         
-        void processInput(GLFWwindow* window, glm::vec3& cameraPos, glm::vec3 cameraFront, glm::vec3 cameraUp);
+        void processInput(GLFWwindow* window, glm::vec3& cube_vertices,glm::vec3& cameraFront);
         
 };
