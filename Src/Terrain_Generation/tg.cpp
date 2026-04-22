@@ -3,14 +3,18 @@
 std::vector<float> TG::generateTerrain(FastNoiseLite& noise) {
     
 
-
-    for (int z = 0; z < SIZE; z++) {
-        for (int x = 0; x < SIZE; x++) {
+    for(int i = 0; i < SIZE; i += 25){
+        struct chunks chunk;
+        
+        for (int z = 0; z < chun_size; z++) {
+            for (int x = 0; x < chun_size; x++) {
             float height = noise.GetNoise((float)x, (float)z) * 10.0f;
-            vertices.push_back(x);
-            vertices.push_back(height);
-            vertices.push_back(z);
+                chunk.chunk_size.push_back(x);
+                chunk.chunk_size.push_back(height);
+                chunk.chunk_size.push_back(z);
+            }
         }
+        all_chunks.push_back(chunk);
     }
     return vertices;
 };
