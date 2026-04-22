@@ -3,6 +3,8 @@
 
 void Move::processInput(GLFWwindow* window, glm::vec3& cube_vertices,glm::vec3& cameraFront,glm::vec3& cameraUp){
     speed = 0.05f;
+
+    //Perpendicular calculation
     glm::vec3 right = glm::normalize(glm::cross(cameraFront, cameraUp));
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
