@@ -13,6 +13,7 @@
 #include "Terrain_Generation/tg.h"
 #include "rendering/normalization.h"
 #include "Player/player.h"
+#include <memory>
 const char* vertexShaderSource = R"(
     #version 330 core
     layout (location = 0) in vec3 aPos;
@@ -120,12 +121,27 @@ int main (){
 
     //Usage of Noise Objects + tg
     noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-    std::vector<float> vertices = tg.generateTerrain(noise);
+    // std::vector<float> vertices = tg.generateTerrain(noise);
 
     //Usage of tg + notmalization + Creating and Using buffer object
     std::vector<unsigned int> indices = tg.generateIndices();
-    std::vector<float> vertices_new = normalization.normaization(indices, vertices);
-    Buffer buffer(vertices_new.data(), vertices_new.size() * sizeof(float), indices.data(), indices.size() * sizeof(unsigned int),player_object.player, sizeof(player_object.player));
+    std::vector<TG::Chunk> chunks_array = tg.generateTerrain(noise);
+    for(int i = 0 ; i < chunks_array.size(); i++){
+        chunks_array[i].chunk_size = normalization.normaization(indices, chunks_array[i].chunk_size);
+    }
+    for(int j = 0 ; j < chunks_array.size(); j++){
+        // Buffer buffer(chunks_array[j].chunk_size.data(), chunks_array[j].chunk_size.size() * sizeof(float), indices.data(), indices.size() * sizeof(unsigned int),player_object.player, sizeof(player_object.player));
+        chunks_array[j].buffer = std::make_unique<Buffer>(
+                chunks_array[j].chunk_size.data(),
+                chunks_array[j].chunk_size.size() * sizeof(float),
+                indices.data(),
+                indices.size() * sizeof(unsigned int),
+                player_object.player,
+                sizeof(player_object.player)
+            );    
+    }
+
+   
 
     //Usage of Shader Object
     shader.use();
@@ -151,14 +167,14 @@ int main (){
         glClearColor(0.53f, 0.81f, 0.98f, 1.0f);
             
         //Buffer for Terrian + Draw Call
-        glBindVertexArray(buffer.VAO);   
+        glBindVertexArray(chunks_array[0].buffer.VAO);   
         mvp.model = glm::mat4(1.0f);
         mvp.cameraPos(cameraPos,cameraFront,cameraUp,shader,cube_vertices); 
-        glDrawArrays(GL_TRIANGLES, 0, vertices_new.size() / 6);
+        glDrawArrays(GL_TRIANGLES, 0, chunks_array[0].chunk_size.size()/2);
 
 
         //Buffer for Cube + Move Cube Logic + Draw call
-        glBindVertexArray(buffer.Player_VAO);
+        glBindVertexArray(chunks_array[0].buffer.Player_VAO);
         player_object.player_movement(cube_vertices,mvp,noise,yaw);
         mvp.cameraPos(cameraPos,cameraFront,cameraUp,shader,cube_vertices); 
         glDrawArrays(GL_TRIANGLES, 0, 36);

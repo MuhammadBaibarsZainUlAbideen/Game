@@ -1,10 +1,10 @@
 #include "tg.h"
 
-std::vector<float> TG::generateTerrain(FastNoiseLite& noise) {
+std::vector<TG::Chunk> TG::generateTerrain(FastNoiseLite& noise) {
     
 
     for(int i = 0; i < SIZE; i += 25){
-        struct chunks chunk;
+        Chunk chunk;
         
         for (int z = 0; z < chun_size; z++) {
             for (int x = 0; x < chun_size; x++) {
@@ -16,7 +16,7 @@ std::vector<float> TG::generateTerrain(FastNoiseLite& noise) {
         }
         all_chunks.push_back(chunk);
     }
-    return vertices;
+    return all_chunks;
 };
 
 std::vector<unsigned int> TG::generateIndices() {
