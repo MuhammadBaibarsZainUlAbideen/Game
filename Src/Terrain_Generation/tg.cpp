@@ -23,11 +23,11 @@ std::vector<unsigned int> TG::generateIndices() {
     
     
 
-    for (int z = 0; z < SIZE - 1; z++) {
-        for (int x = 0; x < SIZE - 1; x++) {
-            int topLeft     = z * SIZE + x;
+    for (int z = 0; z < chun_size - 1; z++) {
+        for (int x = 0; x < chun_size - 1; x++) {
+            int topLeft     = z * chun_size + x;
             int topRight    = topLeft + 1;
-            int bottomLeft  = (z + 1) * SIZE + x;
+            int bottomLeft  = (z + 1) * chun_size + x;
             int bottomRight = bottomLeft + 1;
 
            

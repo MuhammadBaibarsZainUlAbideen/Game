@@ -14,6 +14,7 @@
 #include "rendering/normalization.h"
 #include "Player/player.h"
 #include <memory>
+#include "iostream"
 const char* vertexShaderSource = R"(
     #version 330 core
     layout (location = 0) in vec3 aPos;
@@ -124,14 +125,16 @@ int main (){
     // std::vector<float> vertices = tg.generateTerrain(noise);
 
     //Usage of tg + notmalization + Creating and Using buffer object
-    std::vector<unsigned int> indices = tg.generateIndices();
     std::vector<TG::Chunk> chunks_array = tg.generateTerrain(noise);
+    std::vector<unsigned int> indices = tg.generateIndices();
+    
     for(int i = 0 ; i < chunks_array.size(); i++){
         chunks_array[i].chunk_size = normalization.normaization(indices, chunks_array[i].chunk_size);
+        std::cout << chunks_array[i].chunk_size.size();
     }
     for(int j = 0 ; j < chunks_array.size(); j++){
         // Buffer buffer(chunks_array[j].chunk_size.data(), chunks_array[j].chunk_size.size() * sizeof(float), indices.data(), indices.size() * sizeof(unsigned int),player_object.player, sizeof(player_object.player));
-        chunks_array[j].buffer = std::make_unique<Buffer>(
+        chunks_array[j].buffer = new Buffer(
                 chunks_array[j].chunk_size.data(),
                 chunks_array[j].chunk_size.size() * sizeof(float),
                 indices.data(),
@@ -167,14 +170,14 @@ int main (){
         glClearColor(0.53f, 0.81f, 0.98f, 1.0f);
             
         //Buffer for Terrian + Draw Call
-        glBindVertexArray(chunks_array[0].buffer.VAO);   
+        glBindVertexArray(chunks_array[1].buffer->VAO);   
         mvp.model = glm::mat4(1.0f);
         mvp.cameraPos(cameraPos,cameraFront,cameraUp,shader,cube_vertices); 
-        glDrawArrays(GL_TRIANGLES, 0, chunks_array[0].chunk_size.size()/2);
+        glDrawArrays(GL_TRIANGLES, 0, chunks_array[1].chunk_size.size()/2);
 
 
         //Buffer for Cube + Move Cube Logic + Draw call
-        glBindVertexArray(chunks_array[0].buffer.Player_VAO);
+        glBindVertexArray(chunks_array[1].buffer->Player_VAO);
         player_object.player_movement(cube_vertices,mvp,noise,yaw);
         mvp.cameraPos(cameraPos,cameraFront,cameraUp,shader,cube_vertices); 
         glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -184,6 +187,7 @@ int main (){
         glfwSwapBuffers(window.handle);
         
     }
+
 
     glfwTerminate();
     return 0;
