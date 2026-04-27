@@ -169,18 +169,25 @@ int main (){
         glClear(GL_COLOR_BUFFER_BIT);
         glClearColor(0.53f, 0.81f, 0.98f, 1.0f);
             
-        //Buffer for Terrian + Draw Call
-        glBindVertexArray(chunks_array[1].buffer->VAO);   
-        mvp.model = glm::mat4(1.0f);
-        mvp.cameraPos(cameraPos,cameraFront,cameraUp,shader,cube_vertices); 
-        glDrawArrays(GL_TRIANGLES, 0, chunks_array[1].chunk_size.size()/2);
+      //Buffer for Terrian + Draw Call
+        for(int i = 0 ; i < chunks_array.size(); i++){
+            glBindVertexArray(chunks_array[i].buffer->VAO);   
+            mvp.model = glm::mat4(1.0f);
+            glm::mat4 model = mvp.model;
+            model = glm::translate(model, glm::vec3(1.0f,0.0f,0.0f)* float(i*25.0f));
+            mvp.model = model;
+            mvp.cameraPos(cameraPos,cameraFront,cameraUp,shader,cube_vertices); 
+            glDrawArrays(GL_TRIANGLES, 0, chunks_array[i].chunk_size.size()/3);
 
 
-        //Buffer for Cube + Move Cube Logic + Draw call
-        glBindVertexArray(chunks_array[1].buffer->Player_VAO);
-        player_object.player_movement(cube_vertices,mvp,noise,yaw);
-        mvp.cameraPos(cameraPos,cameraFront,cameraUp,shader,cube_vertices); 
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+            //Buffer for Cube + Move Cube Logic + Draw call
+            glBindVertexArray(chunks_array[i].buffer->Player_VAO);
+            player_object.player_movement(cube_vertices,mvp,noise,yaw);
+            mvp.cameraPos(cameraPos,cameraFront,cameraUp,shader,cube_vertices); 
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        }
+
 
 
 
@@ -191,4 +198,4 @@ int main (){
 
     glfwTerminate();
     return 0;
-}
+}  
